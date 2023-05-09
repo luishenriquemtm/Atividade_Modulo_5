@@ -89,12 +89,10 @@ export SLUGIFY_USES_TEXT_UNIDECODE=yes
 ```
 pip3 install apache-airflow
 ```
-
 4) Inicialize o Airflow
 ```
 airflow db init
 ```
-
 5) Crie um usuário e insira a senha quando solicitado
 ```
 airflow users create \
@@ -104,19 +102,15 @@ airflow users create \
  -— role Admin \
  —- email email@email.com
  ```
-
  6) Ative o webserver
 ```
  airflow webserver --port 8080
  ```
-
  7) Em um novo terminal, inicie o scheduler do Airflow
 ```
 sudo su
-```
 airflow scheduler
 ```
-
 9) Nas configurações do Firewall do GCP, libere a porta 8080 e defina um IP Estático.
 
 10) Crie uma pasta dags dentro da pasta /root/airflow e inisira o arquivo de dag.py.
