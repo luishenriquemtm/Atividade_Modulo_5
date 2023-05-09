@@ -59,3 +59,66 @@ Crie uma conexão com a base de dados SQLite. Acesse a interface do Airflow e v�
 ```
 
 - Os arquivos de Banco de Dados (Northwind_small.sqlite), "output_orders.csv", "count.txt" e foram salvos na pasta data.
+
+## Máquina Virtual
+
+Para demonstrar o funcionamento do Airflow, criei uma máquina virtual no Google Cloud para acesso:
+
+https://35.188.187.24:8080
+
+Será fornecido login e senha para acesso somente para o avaliador do trabalho.
+
+Para Instalação na máquina virtual do GCP, siga esses passos:
+
+1) Crie uma máquina virtual. Estou usando aqui um tipo de máquina: e2-standard-4
+    - Descrição: Debian, Debian GNU/Linux, 11 (bullseye), amd64 built on 20230411, supports Shielded VM features
+2) Clique no botão SSH e abra o terminal.
+3) Insira os comandos:
+```
+sudo su
+```
+apt-get update
+```
+apt install python
+```
+apt-get install software-properties-common
+```
+apt-get install python3-pip
+```
+export SLUGIFY_USES_TEXT_UNIDECODE=yes
+```
+pip3 install apache-airflow
+```
+
+4) Inicialize o Airflow
+```
+airflow db init
+```
+
+5) Crie um usuário e insira a senha quando solicitado
+```
+airflow users create \
+ -— username admin \
+ -— firstname FIRST_NAME \
+ -— lastname LAST_NAME \
+ -— role Admin \
+ —- email email@email.com
+ ```
+
+ 6) Ative o webserver
+```
+ airflow webserver --port 8080
+ ```
+
+ 7) Em um novo terminal, inicie o scheduler do Airflow
+```
+sudo su
+```
+airflow scheduler
+```
+
+9) Nas configurações do Firewall do GCP, libere a porta 8080 e defina um IP Estático.
+
+10) Crie uma pasta dags dentro da pasta /root/airflow e inisira o arquivo de dag.py.
+
+## Lembrando que esses passos são para fins didático e servem para instalação básica.
