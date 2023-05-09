@@ -7,6 +7,7 @@ from airflow.operators.python import PythonOperator
 from airflow import DAG
 from airflow.models import Variable
 from airflow.providers.sqlite.operators.sqlite import SqliteOperator
+from airflow.operators.bash import BashOperator
 
 default_args = {
     'owner': 'airflow',
@@ -18,16 +19,16 @@ default_args = {
     'retry_delay': timedelta(minutes=1),
 }
 # Aqui define o caminho do arquivo de banco de dados
-caminho_db = 'mnt/c/Users/luish/Documents/Luis_Henrique/data/Northwind_small.sqlite'
+caminho_db = '/root/airflow/data/Northwind_small.sqlite'
 
 # Aqui define o caminho do arquivo CSV de saída
-arquivo_csv = 'mnt/c/Users/luish/Documents/Luis_Henrique/data/output_orders.csv'
+arquivo_csv = '/root/airflow/data/output_orders.csv'
 
 # Aqui define o caminho do arquivo TXT de saída
-arquivo_txt = 'mnt/c/Users/luish/Documents/Luis_Henrique/data/count.txt'
+arquivo_txt = '/root/airflow/data/count.txt'
 
 # Aqui define o caminho do arquivo OUTPUT
-output = 'mnt/c/Users/luish/Documents/Luis_Henrique/data/final_output.txt'
+output = '/root/airflow/data/final_output.txt'
 
 def extracao_orders_csv():
     conn = sqlite3.connect(caminho_db)
@@ -45,6 +46,21 @@ def calculo_qnt_vendida():
     with open (arquivo_txt, 'w') as f:
         f.write(str(quantidade_total))
     conn.close()
+
+def export_final_output():
+    import base64
+    # Import count
+    with open(arquivo_txt) as f:
+        count = f.readlines()[0]
+    my_email = Variable.get("my_email")
+    message = my_email+count
+    message_bytes = message.encode('ascii')
+    base64_bytes = base64.b64encode(message_bytes)
+    base64_message = base64_bytes.decode('ascii')
+
+    with open(output,"w") as f:
+        f.write(base64_message)
+    return None
 
 with DAG(
     
@@ -102,7 +118,7 @@ with DAG(
 
     export_final_output = PythonOperator(
         task_id='export_final_output',
-        python_callable=export_final_answer,
+        python_callable=export_final_output,
         provide_context=True
 
     )
